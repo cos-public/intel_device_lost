@@ -3,9 +3,15 @@
 #include <iostream>
 #include <unordered_map>
 
+#define VK_USE_PLATFORM_WIN32_KHR
 #include <vulkan/vulkan.hpp>
 
 #include "helpers.h"
+
+#if defined _DEBUG
+#define ENABLE_VULKAN_VALIDATION
+#endif
+
 
 //simple window procedure
 LRESULT CALLBACK window_proc(_In_ HWND hwnd, _In_ UINT uMsg, _In_ WPARAM wParam, _In_ LPARAM lParam) {
@@ -304,6 +310,8 @@ int main(int argc, char * argv[]) {
 		const auto format = vk::Format::eR8Unorm;
 		const auto image_size = sizei{500, 500};
 
+		const auto command_pool = device->createCommandPoolUnique(vk::CommandPoolCreateInfo(vk::CommandPoolCreateFlags(), queue_family));
+
 		show_window(hInstance, instance.get(), phy_device, device.get(), queue_family, queue);
 
 		const auto [source, source_mem] = create_device_backed_image(device.get(), phy_device.getMemoryProperties(), format, image_size.width, image_size.height,
@@ -311,8 +319,6 @@ int main(int argc, char * argv[]) {
 
 		const auto [dest, dest_mem] = create_device_backed_image(device.get(), phy_device.getMemoryProperties(), format, image_size.width, image_size.height,
 			vk::ImageUsageFlagBits::eSampled | vk::ImageUsageFlagBits::eTransferSrc | vk::ImageUsageFlagBits::eTransferDst);
-
-		const auto command_pool = device->createCommandPoolUnique(vk::CommandPoolCreateInfo(vk::CommandPoolCreateFlags(), queue_family));
 
 		test_blit(device.get(), command_pool.get(), queue, source.get(), dest.get(), image_size);
 
