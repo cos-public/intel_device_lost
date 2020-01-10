@@ -271,10 +271,17 @@ void show_window(HINSTANCE hInstance, const vk::Instance & instance, const vk::P
 }
 
 
-int main(int argc, char ** argv) {
-	constexpr int gpu_index = 0;
-
+int main(int argc, char * argv[]) {
 	try {
+		int gpu_index = 0;
+		if (argc > 1) {
+			const std::string gpu_arg(argv[1]);
+			try {
+				gpu_index = std::stoi(gpu_arg);
+			} catch (...) {
+				std::cerr << "can't parse gpu argument: " << gpu_arg << "\n";
+			}
+		}
 		const HINSTANCE hInstance = GetModuleHandle(NULL);
 		const auto instance = create_vulkan_instance();
 
