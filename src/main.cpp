@@ -131,6 +131,7 @@ vk::UniqueDevice create_vulkan_device(const vk::PhysicalDevice & phy_device, uin
 		.setPEnabledFeatures(nullptr));
 }
 
+// the simplest renderpass
 vk::UniqueRenderPass create_renderpass(const vk::Device & device, vk::Format attachment_format) {
 	const auto color_attachment_ref = vk::AttachmentReference(0, vk::ImageLayout::eColorAttachmentOptimal); //index in renderpass_attachment_descriptions
 
@@ -279,6 +280,7 @@ void show_window(HINSTANCE hInstance, const vk::Instance & instance, const vk::P
 
 int main(int argc, char * argv[]) {
 	try {
+		// initialization boilerplate
 		int gpu_index = 0;
 		if (argc > 1) {
 			const std::string gpu_arg(argv[1]);
@@ -306,6 +308,8 @@ int main(int argc, char * argv[]) {
 		const auto device = create_vulkan_device(phy_device, queue_family);
 
 		const auto queue = device->getQueue(queue_family, 0);
+
+		// the actual test scenario starts here
 
 		const auto format = vk::Format::eR8Unorm;
 		const auto image_size = sizei{500, 500};
